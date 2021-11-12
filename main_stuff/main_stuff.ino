@@ -1,17 +1,10 @@
+
 /*
-  This example connects to an encrypted WiFi network (WPA/WPA2).
-  Then it prints the MAC address of the board,
-  the IP address obtained, and other network details.
-  Then it continuously pings given host specified by IP Address or name.
+ * Auteur : José Carlos Gasser
+ * Date : 12.12.2021
+ * Description : programme qui va être flash sur l'arduino
+ */
 
-  Circuit:
-  * Board with NINA module (Arduino MKR WiFi 1010, MKR VIDOR 4000 and UNO WiFi Rev.2)
-
-  created 13 July 2010
-  by dlf (Metodo2 srl)
-  modified 09 June 2016
-  by Petar Georgiev
-*/
 #include <SPI.h>
 #include <WiFiNINA.h>
 #include <MySQL_Connection.h>
