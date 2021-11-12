@@ -34,6 +34,8 @@ IPAddress server_addr(192,168,1,36);  // IP of the MySQL *server* here
 char user[] = "arduino";              // MySQL user login username
 char password[] = "arduino";        // MySQL user login password
 
+String ardMacAddress;
+
 WiFiClient client;  
 MySQL_Connection conn((Client *)&client);
 
@@ -61,10 +63,12 @@ void setup() {
   // you're connected now, so print out the data:
   Serial.println("You're connected to the network");
 
-
+  String ardMacAddress = getMacAddress();
+  Serial.println(mac);
 }
 
 void loop() {
+
 
   Serial.println("Connecting...");
   if (conn.connect(server_addr, 3306, user, password)) {
@@ -82,4 +86,20 @@ void loop() {
   else
     Serial.println("Connection failed.");
   conn.close();
+}
+
+//Cette fonction va retourner la mac address :)
+String getMacAddress() {
+  byte mac[6];
+  WiFi.macAddress(mac);
+  String cMac = "";
+  for (int i = 0; i < 6; ++i) {
+  if (String(mac[i],HEX).length() < 2)
+  {
+  cMac += 0;
+  }
+  cMac += String(mac[i],HEX);
+  }
+  cMac.toUpperCase();
+  return cMac;
 }
