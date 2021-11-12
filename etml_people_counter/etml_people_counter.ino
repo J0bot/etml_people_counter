@@ -53,7 +53,9 @@ void loop()
   //fois la vitesse du son, le tout divisé par deux
   distance= duration * 0.034 / 2;
   
+  
   //Ici pour le debug on va print sur la console les données de distance en cm
   Serial.print(distance);
   Serial.println(" cm");
+  Serial.println(duration);
 }
