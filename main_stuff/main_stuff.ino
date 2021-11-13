@@ -27,6 +27,7 @@ char password[] = "arduino";        // MySQL user login password
 
 //Ici on va définir toutes les choses qu'on va devoir inserer avec mysql
 String ardMacAddress; //c'est la mac address de l'arduino
+char recType[]; //c'est le type d'info qu'on envoie, entry ou exit
 char INSERT_SQL[] = "INSERT INTO db_pretpi.test (abc) VALUES ('Salut')";
 
 //je sais pas ce que ces deux lignes font, mais si je les enlève ça marche pas du coup voilà
