@@ -4,7 +4,9 @@
  * Date : 12.12.2021
  * Description : programme qui va être flash sur l'arduino et qui commande tout
  */
-
+#include <iostream>
+#include <string>
+#include <algorithm>
 #include <SPI.h>
 #include <WiFiNINA.h>
 #include <MySQL_Connection.h>
@@ -26,9 +28,9 @@ char user[] = "arduino";              // MySQL user login username
 char password[] = "arduino";        // MySQL user login password
 
 //Ici on va définir toutes les choses qu'on va devoir inserer avec mysql
-String ardMacAddress; //c'est la mac address de l'arduino
-char recType[]; //c'est le type d'info qu'on envoie, entry ou exit
-char INSERT_SQL[] = "INSERT INTO db_pretpi.test (abc) VALUES ('Salut')";
+std::string ardMacAddress; //c'est la mac address de l'arduino
+//char recType[]; //c'est le type d'info qu'on envoie, entry ou exit
+//char INSERT_SQL[]; //c'est la variable query
 
 //je sais pas ce que ces deux lignes font, mais si je les enlève ça marche pas du coup voilà
 WiFiClient client;  
@@ -47,42 +49,62 @@ void setup() {
     delay(5000);
   }
   
-  ardMacAddress = getMacAddress();
-}
 
-void loop() {
-  
   Serial.println("Connecting...");
   if (conn.connect(server_addr, 3306, user, password)) {
     delay(1000);
     Serial.println("nice");
-    // Initiate the query class instance
-    MySQL_Cursor *cur_mem = new MySQL_Cursor(&conn);
-    // Execute the query
-    delay(10000);
-    cur_mem->execute(INSERT_SQL);
-    // Note: since there are no results, we do not need to read any data
-    // Deleting the cursor also frees up memory used
-    delete cur_mem;
+    
   }
   else
+  {
     Serial.println("Connection failed.");
+  }
+
+  ardMacAddress = getMacAddress();
+}
+
+void loop() {
+  while (true)
+  {
+  
+    std::string recType = "entry";
+      delay(10000);
+    if (true)
+    {
+      std::string query_str = "INSERT INTO db_pretpi.t_record (recDate,ardMacAddress, recType ) VALUES (NOW(), ";
+      query_str.append(ardMacAddress);
+      query_str.append(", ");
+      query_str.append(recType);
+      query_str.append(")");
+
+      const char *mysql_query = query_str.c_str();
+      // Initiate the query class instance
+      MySQL_Cursor *cur_mem = new MySQL_Cursor(&conn);
+      // Execute the query
+      cur_mem->execute(mysql_query);
+      // Note: since there are no results, we do not need to read any data
+      // Deleting the cursor also frees up memory used
+      delete cur_mem;
+    }
+  }
   conn.close();
 }
 
 //Cette fonction va retourner la mac address :)
 //c'est la seule fonction qui a été prise de l'ancien projet x) 
-String getMacAddress() {
+//Bon j'ai refait la fonction avec std::string, j'ai fait un peu au hasard mais ça compile du coup jsp
+std::string getMacAddress() {
   byte mac[6];
   WiFi.macAddress(mac);
-  String cMac = "";
+  std::string cMac = "";
   for (int i = 0; i < 6; ++i) {
-  if (String(mac[i],HEX).length() < 2)
+  if (std::string(mac[i],HEX).length() < 2)
   {
-  cMac += 0;
+  cMac.append(0);
   }
-  cMac += String(mac[i],HEX);
+  cMac.append(std::string(mac[i],HEX));
   }
-  cMac.toUpperCase();
+  std::transform(cMac.begin(), cMac.end(),cMac.begin(), ::toupper);
   return cMac;
 }
