@@ -67,7 +67,6 @@ void setup() {
 void loop() {
   while (true)
   {
-  
     std::string recType = "entry";
       delay(10000);
     if (true)
@@ -89,6 +88,7 @@ void loop() {
     }
   }
   conn.close();
+  Serial.println("finished my job");
 }
 
 //Cette fonction va retourner la mac address :)
