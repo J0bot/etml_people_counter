@@ -29,16 +29,16 @@ char password[] = "arduino";        // MySQL user login password
 
 //Ici on va définir toutes les choses qu'on va devoir inserer avec mysql
 std::string ardMacAddress; //c'est la mac address de l'arduino
-//char recType[]; //c'est le type d'info qu'on envoie, entry ou exit
-//char INSERT_SQL[]; //c'est la variable query
+//c'est la variable query
 
-//je sais pas ce que ces deux lignes font, mais si je les enlève ça marche pas du coup voilà
-WiFiClient client;  
+//Variable client de la classe WiFiClient
+WiFiClient client;
+//L'objet conn de la classe mysql_connection fait référence à l'objet WifiClient
 MySQL_Connection conn((Client *)&client);
 
 
 void setup() {
-  // Initialize serial and wait for port to open:
+  //Initialisation du bail pour avoir le port console série
   Serial.begin(9600);
 
   // attempt to connect to WiFi network:
@@ -48,28 +48,34 @@ void setup() {
     // wait 5 seconds for connection:
     delay(5000);
   }
-  
 
+  //Connection to mysql database
   Serial.println("Connecting...");
   if (conn.connect(server_addr, 3306, user, password)) {
     delay(1000);
-    Serial.println("nice");
-    
+    Serial.println("Connection successful !");
   }
   else
   {
     Serial.println("Connection failed.");
   }
 
+  //Rajouter son addresse mac si elle n'existe pas dans la table t_arduino
   ardMacAddress = getMacAddress();
+  std::string query_str = "INSERT IGNORE INTO db_pretpi.t_arduino SET ardMacAddress = ";
+  query_str.append(ardMacAddress);
+  const char *mysql_query = query_str.c_str();
+  executeQuery(mysql_query);
+
 }
 
 void loop() {
   while (true)
   {
-    std::string recType = "entry";
+    std::string recType = "entry"; //c'est le type d'info qu'on envoie, entry ou exit
+
       delay(10000);
-    if (true)
+    if (recType == "entry")
     {
       std::string query_str = "INSERT INTO db_pretpi.t_record (recDate,ardMacAddress, recType ) VALUES (NOW(), ";
       query_str.append(ardMacAddress);
@@ -78,13 +84,8 @@ void loop() {
       query_str.append(")");
 
       const char *mysql_query = query_str.c_str();
-      // Initiate the query class instance
-      MySQL_Cursor *cur_mem = new MySQL_Cursor(&conn);
-      // Execute the query
-      cur_mem->execute(mysql_query);
-      // Note: since there are no results, we do not need to read any data
-      // Deleting the cursor also frees up memory used
-      delete cur_mem;
+
+      executeQuery(mysql_query);
     }
   }
   conn.close();
@@ -107,4 +108,16 @@ std::string getMacAddress() {
   }
   std::transform(cMac.begin(), cMac.end(),cMac.begin(), ::toupper);
   return cMac;
+}
+
+//C'est la fonction qui nous permet d'executer une query
+void executeQuery(const char mysql_query[])
+{
+  //Initiate the query class instance
+  MySQL_Cursor *cur_mem = new MySQL_Cursor(&conn);
+  // Execute the query
+  cur_mem->execute(mysql_query);
+  // Note: since there are no results, we do not need to read any data
+  // Deleting the cursor also frees up memory used
+  delete cur_mem;
 }
