@@ -12,7 +12,6 @@
 #include <MySQL_Connection.h>
 #include <MySQL_Cursor.h>
 
-
 //Toutes les infos sensibles sont dans le arduino_secrets.h
 //en l'occurence, sur github, ça sert à rien, mais sur le site d'arduino c'est pratique
 #include "arduino_secrets.h" 
@@ -24,12 +23,10 @@ int status = WL_IDLE_STATUS;     // le status du wifi
 
 //Tout ce qui concerne le mysql
 IPAddress server_addr(192,168,1,36);  // IP of the MySQL *server* here
-char user[] = "arduino";              // MySQL user login username
-char password[] = "arduino";        // MySQL user login password
+char user[] = USER_MYSQL;              // MySQL user login username
+char password[] = PASS_MYSQL;        // MySQL user login password
 
-//Ici on va définir toutes les choses qu'on va devoir inserer avec mysql
-std::string ardMacAddress; //c'est la mac address de l'arduino
-//c'est la variable query
+std::string ardMacAddress; //c'est la mac address de l'arduino, faut la mettre ici pck on en a besoin partout
 
 //Variable client de la classe WiFiClient
 WiFiClient client;
@@ -62,9 +59,9 @@ void setup() {
 
   //Rajouter son addresse mac si elle n'existe pas dans la table t_arduino
   ardMacAddress = getMacAddress();
-  std::string query_str = "INSERT IGNORE INTO db_pretpi.t_arduino SET ardMacAddress = ";
-  query_str.append(ardMacAddress);
-  const char *mysql_query = query_str.c_str();
+  std::string query_str = "INSERT IGNORE INTO db_pretpi.t_arduino SET ardMacAddress = "; //On va ecrire la query dans les values
+  query_str.append(ardMacAddress); //Cette ligne c'est pour ajouter la mac address à la query
+  const char *mysql_query = query_str.c_str(); //Ici faut transformer le string en char[], pck sinon la classe mysql accepte pas
   executeQuery(mysql_query);
 
 }
@@ -77,18 +74,10 @@ void loop() {
       delay(10000);
     if (recType == "entry")
     {
-      std::string query_str = "INSERT INTO db_pretpi.t_record (recDate,ardMacAddress, recType ) VALUES (NOW(), ";
-      query_str.append(ardMacAddress);
-      query_str.append(", ");
-      query_str.append(recType);
-      query_str.append(")");
-
-      const char *mysql_query = query_str.c_str();
-
-      executeQuery(mysql_query);
+      insert_record(ardMacAddress, recType);
     }
   }
-  conn.close();
+  conn.close(); //Si on a tout finit, on ferme la connection
   Serial.println("finished my job");
 }
 
@@ -120,4 +109,17 @@ void executeQuery(const char mysql_query[])
   // Note: since there are no results, we do not need to read any data
   // Deleting the cursor also frees up memory used
   delete cur_mem;
+}
+
+//cette fonction permet d'inserer une donnée dans la table t_record
+void insert_record(std::string ardMacAddress, std::string recType)
+{
+  std::string query_str = "INSERT INTO db_pretpi.t_record (recDate,ardMacAddress, recType ) VALUES (NOW(), "; //Design de la query
+  query_str.append(ardMacAddress); //on ajoute la mac address dans le string
+  query_str.append(", "); //on rajoute une virgule pour separer les value
+  query_str.append(recType); //on rajoute le type de donnée qui doit renter
+  query_str.append(")"); //On rajoute la parentèse de fin de query
+
+  const char *mysql_query = query_str.c_str(); //transformer notre std::string en char array
+  executeQuery(mysql_query); //On execute la fonction executeQuery
 }
