@@ -86,13 +86,15 @@ void loop() {
   {
 
     //Ici on va check si les gens rentrent ou sortent
-
-
     
-    char* recType = "entry"; //c'est le type d'info qu'on envoie, entry ou exit
+    Serial.println(analogRead(A5));
+
+    //Si laser : 31, si pas laser : 1023
+    
+    char* recType = "exit"; //c'est le type d'info qu'on envoie, entry ou exit
 
       delay(10000);
-    if (recType == "entry")
+    if (recType == "exit")
     {
       insert_record(ardMacAddress, recType);
     }
@@ -142,7 +144,6 @@ void insert_record(char* ardMacAddress, char* recType)
   int string_length = sizeof(char)*1024;
   char* query_str = "INSERT INTO db_pretpi.t_record (recDate,ardMacAddress, recType ) VALUES (NOW(), \'"; //Design de la query
 
-  //fdsfsdfs','entry')
   char* request = (char*)malloc(string_length);
   
   int index = 0;
