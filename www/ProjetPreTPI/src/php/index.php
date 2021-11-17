@@ -43,7 +43,7 @@
         </div>
 
         <div class="row ml-1 mt-3">
-            <div class="col-1"><input id="toggleCharts" type="checkbox" checked data-toggle="toggle" data-on="Temps réel" data-off="Graphiques" data-onstyle="info" data-offstyle="primary" onclick="toggleCharts()"></div>
+            <div><input id="toggleCharts" type="checkbox" checked data-toggle="toggle" data-on="Temps réel" data-off="Graphiques" data-onstyle="info" data-offstyle="primary" onclick="toggleCharts()"></div>
             <div class="col"></div>
         </div>
         <div class="row row-cols-xl-3 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1">
