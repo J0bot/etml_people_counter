@@ -142,7 +142,7 @@ void insert_record(char* ardMacAddress, char* recType)
   int string_length = sizeof(char)*1024;
   char* query_str = "INSERT INTO db_pretpi.t_record (recDate,ardMacAddress, recType ) VALUES (NOW(), \'"; //Design de la query
 
-  //fdsfsdfs', 'entry')
+  //fdsfsdfs','entry')
   char* request = (char*)malloc(string_length);
   
   int index = 0;
@@ -151,11 +151,19 @@ void insert_record(char* ardMacAddress, char* recType)
     index++;
   }
   int index2 = 0;
-  index++;
   while(ardMacAddress[index2] != '\0') {
-    request[index++] = ardMacAddress[index2++];
+    request[index++] = ardMacAddress[index2];
+    index2++;
   }
+  request[index++] = '\''; request[index++] = ','; request[index++] = '\'';
+  int index3 = 0;
+  while(recType[index3] != '\0') {
+    request[index++] = recType[index3];
+    index3++;
+  }
+  
   request[index++] = '\'';
+  request[index++] = ')';
   request[index] = '\0';
   Serial.println(request);
 
