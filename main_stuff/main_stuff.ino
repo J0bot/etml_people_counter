@@ -26,7 +26,7 @@ IPAddress server_addr(192,168,1,36);  // IP of the MySQL *server* here
 char user[] = USER_MYSQL;              // MySQL user login username
 char password[] = PASS_MYSQL;        // MySQL user login password
 
-std::string ardMacAddress; //c'est la mac address de l'arduino, faut la mettre ici pck on en a besoin partout
+String ardMacAddress; //c'est la mac address de l'arduino, faut la mettre ici pck on en a besoin partout
 
 //Variable client de la classe WiFiClient
 WiFiClient client;
@@ -59,10 +59,27 @@ void setup() {
 
   //Rajouter son addresse mac si elle n'existe pas dans la table t_arduino
   ardMacAddress = getMacAddress();
-  std::string query_str = "INSERT IGNORE INTO db_pretpi.t_arduino SET ardMacAddress = "; //On va ecrire la query dans les values
-  query_str.append(ardMacAddress); //Cette ligne c'est pour ajouter la mac address à la query
-  const char *mysql_query = query_str.c_str(); //Ici faut transformer le string en char[], pck sinon la classe mysql accepte pas
-  executeQuery(mysql_query);
+
+  int string_length = sizeof(char)*1024;
+  char* macChar = (char*)malloc(string_length);
+  ardMacAddress.toCharArray(macChar ,string_length);
+  Serial.println(macChar);
+
+  char* mysql_query = "INSERT IGNORE INTO db_pretpi.t_arduino SET ardMacAddress=\'"; //On va ecrire la query dans les values
+  char* request = (char*)malloc(string_length);
+  int index = 0;
+  while(mysql_query[index]!='\0') {
+    request[index] = mysql_query[index++];
+  }
+  int index2 = 0;
+  index++;
+  while(macChar[index2] != '\0') {
+    request[index++] = macChar[index2++];
+  }
+  request[index++] = '\'';
+  request[index] = '\0';
+  Serial.println(request);
+  executeQuery(request);
 
 }
 
@@ -74,7 +91,7 @@ void loop() {
       delay(10000);
     if (recType == "entry")
     {
-      insert_record(ardMacAddress, recType);
+      //insert_record(ardMacAddress, recType);
     }
   }
   conn.close(); //Si on a tout finit, on ferme la connection
@@ -84,18 +101,18 @@ void loop() {
 //Cette fonction va retourner la mac address :)
 //c'est la seule fonction qui a été prise de l'ancien projet x) 
 //Bon j'ai refait la fonction avec std::string, j'ai fait un peu au hasard mais ça compile du coup jsp
-std::string getMacAddress() {
+String getMacAddress() {
   byte mac[6];
   WiFi.macAddress(mac);
-  std::string cMac = "";
+  String cMac = "";
   for (int i = 0; i < 6; ++i) {
-  if (std::string(mac[i],HEX).length() < 2)
-  {
-  cMac.append(0);
+    if (String(mac[i],HEX).length() < 2)
+      {
+        cMac += 0;
+      }
+    cMac += String(mac[i],HEX);
   }
-  cMac.append(std::string(mac[i],HEX));
-  }
-  std::transform(cMac.begin(), cMac.end(),cMac.begin(), ::toupper);
+  cMac.toUpperCase();
   return cMac;
 }
 
@@ -115,7 +132,7 @@ void executeQuery(const char mysql_query[])
 void insert_record(std::string ardMacAddress, std::string recType)
 {
   std::string query_str = "INSERT INTO db_pretpi.t_record (recDate,ardMacAddress, recType ) VALUES (NOW(), "; //Design de la query
-  query_str.append(ardMacAddress); //on ajoute la mac address dans le string
+  //query_str.append(ardMacAddress); //on ajoute la mac address dans le string
   query_str.append(", "); //on rajoute une virgule pour separer les value
   query_str.append(recType); //on rajoute le type de donnée qui doit renter
   query_str.append(")"); //On rajoute la parentèse de fin de query
