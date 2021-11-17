@@ -16,3 +16,21 @@ this is the projet of the group 4, [José](https://github.com/J0bot), [Elisa](ht
 > - [MySQL Connector](https://github.com/ChuckBell/MySQL_Connector_Arduino)
 > - [WiFiNINA](https://github.com/arduino-libraries/WiFiNINA)
 
+### objectifs SMART?
+à atteindre pour le 2 décembre:
+
+Spéfifique  
+Mesurable  
+Ambitieux  
+Réaliste  
+Temporelement définit  
+
+* Nous voulons connecter un module arduino à une base de donnée afin de pouvoir transmettre des données récoltées par un laser et ce avant le 2 décembre
+
+* Nous prévoyons d'avoir un compteur de personnes fonctionnel: est capavle de compter les entrées et sorties de personnes dans une salle, celui-ci doit être capable de pouvoir faire ce calcul en temps réel. et qu'il envoie les données des calculs à une base de données MySQL dans un serveur web en réseau local. 
+
+L'arduino se programme en C++ sur Visual Studio Code et Arduino IDE.
+
+on cherchera uniquement à en programmer une fonctionnelle 
+
+Celui-ci doit être opérationnel pour le 2 décembre dernier délai.
