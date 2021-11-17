@@ -1,6 +1,8 @@
 # etml_people_counter
 This projet is a people counter made with arduino (c++) for a projet in the ETML
 
+this is the projet of the group 4, [José](https://github.com/J0bot), [Elisa](https://github.com/kuoch00), [Maxime](https://github.com/emixam420) et [Larissa](https://github.com/nanachronisme)
+
 > ### Material used : 
 >
 > - [Ultrasonic sensor HC-SR04](https://cdn.sparkfun.com/datasheets/Sensors/Proximity/HCSR04.pdf)
