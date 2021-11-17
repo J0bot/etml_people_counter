@@ -26,7 +26,7 @@ IPAddress server_addr(192,168,1,36);  // IP of the MySQL *server* here
 char user[] = USER_MYSQL;              // MySQL user login username
 char password[] = PASS_MYSQL;        // MySQL user login password
 
-String ardMacAddress; //c'est la mac address de l'arduino, faut la mettre ici pck on en a besoin partout
+char* ardMacAddress; //c'est la mac address de l'arduino, faut la mettre ici pck on en a besoin partout
 
 //Variable client de la classe WiFiClient
 WiFiClient client;
@@ -61,20 +61,18 @@ void setup() {
   ardMacAddress = getMacAddress();
 
   int string_length = sizeof(char)*1024;
-  char* macChar = (char*)malloc(string_length);
-  ardMacAddress.toCharArray(macChar ,string_length);
-  Serial.println(macChar);
+
+  Serial.println(ardMacAddress);
 
   char* mysql_query = "INSERT IGNORE INTO db_pretpi.t_arduino SET ardMacAddress=\'"; //On va ecrire la query dans les values
   char* request = (char*)malloc(string_length);
   int index = 0;
   while(mysql_query[index]!='\0') {
-    request[index] = mysql_query[index++];
+    request[index++] = mysql_query[index];
   }
   int index2 = 0;
-  index++;
-  while(macChar[index2] != '\0') {
-    request[index++] = macChar[index2++];
+  while(ardMacAddress[index2] != '\0') {
+    request[index++] = ardMacAddress[index2++];
   }
   request[index++] = '\'';
   request[index] = '\0';
@@ -86,12 +84,17 @@ void setup() {
 void loop() {
   while (true)
   {
-    std::string recType = "entry"; //c'est le type d'info qu'on envoie, entry ou exit
+
+    //Ici on va check si les gens rentrent ou sortent
+
+
+    
+    char* recType = "entry"; //c'est le type d'info qu'on envoie, entry ou exit
 
       delay(10000);
     if (recType == "entry")
     {
-      //insert_record(ardMacAddress, recType);
+      insert_record(ardMacAddress, recType);
     }
   }
   conn.close(); //Si on a tout finit, on ferme la connection
@@ -101,7 +104,7 @@ void loop() {
 //Cette fonction va retourner la mac address :)
 //c'est la seule fonction qui a été prise de l'ancien projet x) 
 //Bon j'ai refait la fonction avec std::string, j'ai fait un peu au hasard mais ça compile du coup jsp
-String getMacAddress() {
+char* getMacAddress() {
   byte mac[6];
   WiFi.macAddress(mac);
   String cMac = "";
@@ -113,7 +116,12 @@ String getMacAddress() {
     cMac += String(mac[i],HEX);
   }
   cMac.toUpperCase();
-  return cMac;
+
+  int string_length = sizeof(char)*1024;
+  char* macChar = (char*)malloc(string_length);
+  cMac.toCharArray(macChar,string_length);
+  
+  return macChar;
 }
 
 //C'est la fonction qui nous permet d'executer une query
@@ -129,14 +137,27 @@ void executeQuery(const char mysql_query[])
 }
 
 //cette fonction permet d'inserer une donnée dans la table t_record
-void insert_record(std::string ardMacAddress, std::string recType)
+void insert_record(char* ardMacAddress, char* recType)
 {
-  std::string query_str = "INSERT INTO db_pretpi.t_record (recDate,ardMacAddress, recType ) VALUES (NOW(), "; //Design de la query
-  //query_str.append(ardMacAddress); //on ajoute la mac address dans le string
-  query_str.append(", "); //on rajoute une virgule pour separer les value
-  query_str.append(recType); //on rajoute le type de donnée qui doit renter
-  query_str.append(")"); //On rajoute la parentèse de fin de query
+  int string_length = sizeof(char)*1024;
+  char* query_str = "INSERT INTO db_pretpi.t_record (recDate,ardMacAddress, recType ) VALUES (NOW(), \'"; //Design de la query
 
-  const char *mysql_query = query_str.c_str(); //transformer notre std::string en char array
-  executeQuery(mysql_query); //On execute la fonction executeQuery
+  //fdsfsdfs', 'entry')
+  char* request = (char*)malloc(string_length);
+  
+  int index = 0;
+  while(query_str[index]!='\0') {
+    request[index] = query_str[index];
+    index++;
+  }
+  int index2 = 0;
+  index++;
+  while(ardMacAddress[index2] != '\0') {
+    request[index++] = ardMacAddress[index2++];
+  }
+  request[index++] = '\'';
+  request[index] = '\0';
+  Serial.println(request);
+
+  executeQuery(request); //On execute la fonction executeQuery
 }
