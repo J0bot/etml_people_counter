@@ -19,6 +19,10 @@
         <link rel="stylesheet" href="./src/css/library/Chart.min.css">
         <link rel="stylesheet" href="./src/css/library/bootstrap-toggle.min.css">
         <link rel="stylesheet" href="./src/css/custom.css">
+        
+        <!--refresh auto de la page toutes les 10 sec (changer plus tard si necessaire)-->
+        <meta http-equiv="refresh" content="10; url="<?php echo $_SERVER['PHP_SELF']; ?>">
+        
     </head>
     <body>
         <div class="modal fade" id="resumeModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
