@@ -13,7 +13,7 @@
 
 //Toutes les infos sensibles sont dans le arduino_secrets.h
 //en l'occurence, sur github, ça sert à rien, mais sur le site d'arduino c'est pratique
-#include "arduino_secrets.h" 
+#include "arduino_secrets.h"
 
 //Tout ce qui concerne le wifi
 char ssid[] = SECRET_SSID;        // your network SSID (name)
@@ -107,8 +107,6 @@ void setup() {
     // Si la connection a vraiment fail on va afficher qu'elle a fail
     Serial.println("Connection failed.");
   }
-
-
 }
 
 // Cette fonction va tourner tout le temps
@@ -116,50 +114,27 @@ void loop() {
   
   while (true)
   {
-    //Ici on va check si les gens rentrent ou sortent
-    //Serial.print("Pin A5 : ");
-    //Serial.println(analogRead(A5));
-    if(analogRead(A5)<70)
+    blink_leds();
+    int result = checklasers();
+    if(result == L)
     {
-      digitalWrite(0, HIGH);  
-    }
-    else
-    {
-      digitalWrite(0, LOW);
-    }
-    //Serial.print("Pin A6 : ");
-    //Serial.println(analogRead(A6));
-    if(analogRead(A6)<70)
-    {
-      digitalWrite(1, HIGH);  
-    }
-    else
-    {
-      digitalWrite(1, LOW);
+      char* recType = "entry"; //c'est le type d'info qu'on envoie, entry ou exit
+      Serial.println("entry");
+      insert_record(ardMacAddress, recType);
     }
 
-   int result = checklasers();
-   if(result == L)
-   {
-        char* recType = "entry"; //c'est le type d'info qu'on envoie, entry ou exit
-        Serial.println("entry");
-        insert_record(ardMacAddress, recType);
-
-   }
-
-   if(result == R)
-   {
-        char* recType = "exit"; //c'est le type d'info qu'on envoie, entry ou exit
-        Serial.println("exit");
-        insert_record(ardMacAddress, recType);
-   }
-    
-    //treshhold de 70
-    
+    if(result == R)
+    {
+      char* recType = "exit"; //c'est le type d'info qu'on envoie, entry ou exit
+      Serial.println("exit");
+      insert_record(ardMacAddress, recType);
+    }    
   }
   conn.close(); //Si on a tout finit, on ferme la connection
   Serial.println("finished my job");
 }
+
+
 
 //Cette fonction va retourner la mac address :)
 //c'est la seule fonction qui a été prise de l'ancien projet x) 
@@ -185,6 +160,7 @@ char* getMacAddress() {
   return macChar; //On retourne notre mac addresse sous forme de char*
 }
 
+
 //C'est la fonction qui nous permet d'executer une query
 void executeQuery(const char mysql_query[])
 {
@@ -196,6 +172,8 @@ void executeQuery(const char mysql_query[])
   // Deleting the cursor also frees up memory used
   delete cur_mem;
 }
+
+
 
 //cette fonction permet d'inserer une donnée dans la table t_record
 void insert_record(char* ardMacAddress, char* recType)
@@ -233,94 +211,101 @@ void insert_record(char* ardMacAddress, char* recType)
   free(request);
 }
 
+
+
 int checklasers()
 {
+  int previous_index = state_index;
+  
+  //C'est l'état des deux capteurs
   int state;
+  
+  //Si les deux lasers sont detectés
   if(analogRead(A5)<70 && analogRead(A6)<70 )
     state = LR;
 
+  //si on detecte que le laser de gauche
   if(analogRead(A5)<70 && analogRead(A6)>70 )
     state = L;
-
+    
+  //Si on detecte que le laser de droite
   if(analogRead(A5)>70 && analogRead(A6)<70 )
     state = R;
 
+  //Si on detecte aucun des deux lasers
   if(analogRead(A5)>70 && analogRead(A6)>70 )
     state = 0;
 
-
-
-  if(state_index == 0) {
-    states[state_index] = state;
-    state_index++;
-
-    if(state_index==4)
-    {
-      state_index = 0;  
-    }
-  }
-  /*
-  if(states[state_index-1] == state)
+  //Si on est dans le même etat 
+  if(states[state_index] == state)
   {
     return 0;
   }
 
-  
-  if(state_index == 4)
-  { 
-    state_index = 0; 
-    
-    states[state_index] = state;
-    state_index++;
+  state_index++;
 
-  }
-  else
+  if(state_index==4)
   {
-    states[state_index] = state;
-    state_index++;
-
-
+    state_index = 0;  
   }
-    Serial.print("State_index : ");
-    Serial.println(state_index-1);
-
-    Serial.print("State : ");
-    Serial.println(state);
-
-    Serial.print("states : ");
-    Serial.print(states[0]);
-    Serial.print(", ");
-    Serial.print(states[1]);
-    Serial.print(", ");
-    Serial.print(states[2]);
-    Serial.print(", ");
-    Serial.println(states[3]);
   
-    if (state == LR) {
+  states[state_index] = state;
+
+  Serial.print("State_index : ");
+  Serial.println(state_index);
+
+  Serial.print("State : ");
+  Serial.println(state);
+
+  Serial.print("states : ");
+  Serial.print(states[0]);
+  Serial.print(", ");
+  Serial.print(states[1]);
+  Serial.print(", ");
+  Serial.print(states[2]);
+  Serial.print(", ");
+  Serial.println(states[3]);
+
+  if (state == LR) 
+  {
     int sum_states = 0;
-    for(int i = 0 ; i < state_index ; i++)
+    for(int i = 0 ; i < 4 ; i++)
     {
       sum_states+=states[i];
     }
 
-    memset(states, 0, 4);
-
+    Serial.print("Somme des states : ");
     Serial.println(sum_states);
     if(sum_states==6)
     {
-
       Serial.println("Detected entry of exit");
-        if(states[0] == R || states[3] == R)
-        {
-          return R;
-        }
-        else if(states[0] == L || states[3] == L)
-        {
-          return L;
-        }
+      if(states[previous_index] == R)
+      {
+        
+        return R;
+      }
+      else if(states[previous_index] == L)
+      {
+        return L;
+      }
     }
-    }
-    
+  }
   return 0;
-  */
+}
+
+
+//Cette fonction va allumer ou eteindre selon la valeur du capteur
+void blink_leds()
+{
+  if(analogRead(A5)<70)
+    digitalWrite(0, HIGH);  
+  else
+    digitalWrite(0, LOW);
+
+  if(analogRead(A6)<70)
+    digitalWrite(1, HIGH);  
+  else
+    digitalWrite(1, LOW);
+
+  return 0;
 }
