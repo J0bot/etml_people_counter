@@ -32,11 +32,27 @@ WiFiClient client;
 //L'objet conn de la classe mysql_connection fait référence à l'objet WifiClient
 MySQL_Connection conn((Client *)&client);
 
+//pins 
+//redPin c'est la 1
+//yellow c'est la A1
+
+//define de states of the lasers
+#define R 1
+#define L 2
+#define LR 3
+static int state_index = 0;
+int states[4];
+
+
 //La fonction setup va se lancer une seule fois
 void setup() {
   //Initialisation du bail pour avoir le port console série
   Serial.begin(9600);
 
+  pinMode(1, OUTPUT);
+  pinMode(0, OUTPUT);
+
+  memset(states, 0, 4);
 
 
   // Ici on va essayer de se connecter au wifi
@@ -59,6 +75,7 @@ void setup() {
     
     //On va attraper l'addresse mac de l'arduino
     ardMacAddress = getMacAddress();
+    
 
     //On va afficher l'addresse mac pour du debug
     Serial.println(ardMacAddress);
@@ -83,6 +100,7 @@ void setup() {
 
     //On execute la query
     executeQuery(request);
+    free(request);
   }
   else
   {
@@ -99,18 +117,45 @@ void loop() {
   while (true)
   {
     //Ici on va check si les gens rentrent ou sortent
-    
-    Serial.println(analogRead(A5));
-
-    //Si laser : 31, si pas laser : 1023
-    
-    char* recType = "exit"; //c'est le type d'info qu'on envoie, entry ou exit
-
-      delay(10000); //delai de 10 secondes entre chaque entry pour le debug
-    if (recType == "exit" || recType == "entry")
+    //Serial.print("Pin A5 : ");
+    //Serial.println(analogRead(A5));
+    if(analogRead(A5)<70)
     {
-      insert_record(ardMacAddress, recType);
+      digitalWrite(0, HIGH);  
     }
+    else
+    {
+      digitalWrite(0, LOW);
+    }
+    //Serial.print("Pin A6 : ");
+    //Serial.println(analogRead(A6));
+    if(analogRead(A6)<70)
+    {
+      digitalWrite(1, HIGH);  
+    }
+    else
+    {
+      digitalWrite(1, LOW);
+    }
+
+   int result = checklasers();
+   if(result == L)
+   {
+        char* recType = "entry"; //c'est le type d'info qu'on envoie, entry ou exit
+        Serial.println("entry");
+        insert_record(ardMacAddress, recType);
+
+   }
+
+   if(result == R)
+   {
+        char* recType = "exit"; //c'est le type d'info qu'on envoie, entry ou exit
+        Serial.println("exit");
+        insert_record(ardMacAddress, recType);
+   }
+    
+    //treshhold de 70
+    
   }
   conn.close(); //Si on a tout finit, on ferme la connection
   Serial.println("finished my job");
@@ -185,4 +230,97 @@ void insert_record(char* ardMacAddress, char* recType)
   Serial.println(request); //On print la requete dans la console pour le debug
 
   executeQuery(request); //On execute la fonction executeQuery
+  free(request);
+}
+
+int checklasers()
+{
+  int state;
+  if(analogRead(A5)<70 && analogRead(A6)<70 )
+    state = LR;
+
+  if(analogRead(A5)<70 && analogRead(A6)>70 )
+    state = L;
+
+  if(analogRead(A5)>70 && analogRead(A6)<70 )
+    state = R;
+
+  if(analogRead(A5)>70 && analogRead(A6)>70 )
+    state = 0;
+
+
+
+  if(state_index == 0) {
+    states[state_index] = state;
+    state_index++;
+
+    if(state_index==4)
+    {
+      state_index = 0;  
+    }
+  }
+  /*
+  if(states[state_index-1] == state)
+  {
+    return 0;
+  }
+
+  
+  if(state_index == 4)
+  { 
+    state_index = 0; 
+    
+    states[state_index] = state;
+    state_index++;
+
+  }
+  else
+  {
+    states[state_index] = state;
+    state_index++;
+
+
+  }
+    Serial.print("State_index : ");
+    Serial.println(state_index-1);
+
+    Serial.print("State : ");
+    Serial.println(state);
+
+    Serial.print("states : ");
+    Serial.print(states[0]);
+    Serial.print(", ");
+    Serial.print(states[1]);
+    Serial.print(", ");
+    Serial.print(states[2]);
+    Serial.print(", ");
+    Serial.println(states[3]);
+  
+    if (state == LR) {
+    int sum_states = 0;
+    for(int i = 0 ; i < state_index ; i++)
+    {
+      sum_states+=states[i];
+    }
+
+    memset(states, 0, 4);
+
+    Serial.println(sum_states);
+    if(sum_states==6)
+    {
+
+      Serial.println("Detected entry of exit");
+        if(states[0] == R || states[3] == R)
+        {
+          return R;
+        }
+        else if(states[0] == L || states[3] == L)
+        {
+          return L;
+        }
+    }
+    }
+    
+  return 0;
+  */
 }
