@@ -161,6 +161,7 @@ char* getMacAddress() {
 }
 
 
+
 //C'est la fonction qui nous permet d'executer une query
 void executeQuery(const char mysql_query[])
 {
@@ -213,6 +214,7 @@ void insert_record(char* ardMacAddress, char* recType)
 
 
 
+// Cette fonction va checker si des gens entrent ou sortent
 int checklasers()
 {
   int previous_index = state_index;
@@ -236,21 +238,25 @@ int checklasers()
   if(analogRead(A5)>70 && analogRead(A6)>70 )
     state = 0;
 
-  //Si on est dans le même etat 
+  //Si on est dans le même etat que celui dans l'index actuel du tableau
   if(states[state_index] == state)
   {
     return 0;
   }
 
+  //On ajoute 1 à la variable index
   state_index++;
 
+  //Si notre index est à 4, on retourne à 0
   if(state_index==4)
   {
     state_index = 0;  
   }
   
+  //On set notre tabeau stales à l'index state_index la valeur state.
   states[state_index] = state;
 
+  //Tout ce code est purement du débug
   Serial.print("State_index : ");
   Serial.println(state_index);
 
@@ -266,8 +272,10 @@ int checklasers()
   Serial.print(", ");
   Serial.println(states[3]);
 
+  //Si on est dans l'état LR (deux lasers sont captés), on va lancer notre calcul
   if (state == LR) 
   {
+    //Si la somme des valeurs du tableau est de 6, ça veut dire qu'on a une entry ou exit
     int sum_states = 0;
     for(int i = 0 ; i < 4 ; i++)
     {
@@ -306,6 +314,4 @@ void blink_leds()
     digitalWrite(1, HIGH);  
   else
     digitalWrite(1, LOW);
-
-  return 0;
 }
