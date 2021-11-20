@@ -29,7 +29,7 @@ Temporelement définit
 
 * Nous prévoyons d'avoir un compteur de personnes fonctionnel: est capavle de compter les entrées et sorties de personnes dans une salle, celui-ci doit être capable de pouvoir faire ce calcul en temps réel. et qu'il envoie les données des calculs à une base de données MySQL dans un serveur web en réseau local. 
 
-L'arduino se programme en C++ sur Visual Studio Code et Arduino IDE.
+L'arduino se programme en C++ sur Visual Studio Code, Arduino IDE, mais surtout avec PlatformIO sur Visual Studio Code.
 
 on cherchera uniquement à en programmer une fonctionnelle 
 
