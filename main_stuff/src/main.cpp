@@ -38,6 +38,9 @@ MySQL_Connection conn((Client *)&client);
 static int state_index = 0;
 int states[4];
 
+///
+/// DECLARATION DE TOUTES LES FONCTIONS
+///
 
 //Cette fonction va retourner la mac address
 char* getMacAddress() {
@@ -81,6 +84,7 @@ void insert_record(char* ardMacAddress, char* recType)
   int string_length = sizeof(char)*1024;
   char* query_str = "INSERT INTO db_pretpi.t_record (recDate,ardMacAddress, recType ) VALUES (NOW(), \'"; //Design de la query
 
+  //On va allouer string_length de place dans la mémoire pour notre string de query
   char* request = (char*)malloc(string_length);
   
   int index = 0;
@@ -107,7 +111,7 @@ void insert_record(char* ardMacAddress, char* recType)
   Serial.println(request); //On print la requete dans la console pour le debug
 
   executeQuery(request); //On execute la fonction executeQuery
-  free(request);
+  free(request); //Ne pas oublier de libérer notre requete de la mémoire, sinon tout va être utilisé et ça ne marchera plus
 }
 
 
@@ -181,6 +185,8 @@ int checklasers()
 
     Serial.print("Somme des states : ");
     Serial.println(sum_states);
+
+    //Si la somme est states est de 6, nous sommes dans un etat de entry ou exit, nous avons trouvé cette valeur grace à une table de vérités
     if(sum_states==6)
     {
       Serial.println("Detected entry of exit");
@@ -213,11 +219,15 @@ void blink_leds()
 }
 
 
+///
+/// FONCTIONS DE SETUP ET LOOP
+///
+
+
 //La fonction setup va se lancer une seule fois
 void setup() {
   //Initialisation du bail pour avoir le port console série
   Serial.begin(9600);
-
   
   pinMode(1, OUTPUT);
   pinMode(0, OUTPUT);
@@ -286,6 +296,8 @@ void loop() {
   {
     blink_leds();
     int result = checklasers();
+
+    //Si le resultat de nos tests est de L, nous allons envoyer une entry
     if(result == L)
     {
       char* recType = "entry"; //c'est le type d'info qu'on envoie, entry ou exit
@@ -293,6 +305,7 @@ void loop() {
       insert_record(ardMacAddress, recType);
     }
 
+    //Si le resultat de nos tests est de R, nous allons envoyer une exit
     if(result == R)
     {
       char* recType = "exit"; //c'est le type d'info qu'on envoie, entry ou exit
