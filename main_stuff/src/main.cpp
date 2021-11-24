@@ -294,6 +294,11 @@ void loop() {
   
   while (true)
   {
+
+    /////
+    // AJOURD'HUI FAUT FINALISER CE ZBEUL
+    /////
+
     blink_leds();
     int result = checklasers();
 
