@@ -5,7 +5,7 @@ this is the projet of the group 4, [José](https://github.com/J0bot), [Elisa](ht
 
 > ### Material used : 
 >
-> - [Photoresistor](#)
+> - [Photoresistor](https://arduinomodules.info/ky-018-photoresistor-module)
 
 > ### Sources :
 >
