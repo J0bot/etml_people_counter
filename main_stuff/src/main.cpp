@@ -144,7 +144,20 @@ int checklasers()
   {
     return 0;
   }
+  state_index++;
+  if (state_index >= 4) {
+    state_index = 0;
+  }
+  Serial.println(state_index);
+  states[state_index] = state;
 
+
+
+  return 0;
+
+
+
+/*
   //On ajoute 1 à la variable index
   state_index++;
 
@@ -158,20 +171,10 @@ int checklasers()
   states[state_index] = state;
 
   //Tout ce code est purement du débug
-  Serial.print("State_index : ");
-  Serial.println(state_index);
+  
+    Serial.print("State : ");
+    Serial.println(state);
 
-  Serial.print("State : ");
-  Serial.println(state);
-
-  Serial.print("states : ");
-  Serial.print(states[0]);
-  Serial.print(", ");
-  Serial.print(states[1]);
-  Serial.print(", ");
-  Serial.print(states[2]);
-  Serial.print(", ");
-  Serial.println(states[3]);
 
   //Si on est dans l'état LR (deux lasers sont captés), on va lancer notre calcul
   if (state == LR) 
@@ -182,24 +185,53 @@ int checklasers()
     {
       sum_states+=states[i];
     }
+ 
+    Serial.print("State_index : ");
+    Serial.println(state_index);
 
+    Serial.print("states : ");
+    Serial.print(states[0]);
+    Serial.print(", ");
+    Serial.print(states[1]);
+    Serial.print(", ");
+    Serial.print(states[2]);
+    Serial.print(", ");
+    Serial.println(states[3]);
     Serial.print("Somme des states : ");
     Serial.println(sum_states);
 
     //Si la somme est states est de 6, nous sommes dans un etat de entry ou exit, nous avons trouvé cette valeur grace à une table de vérités
     if(sum_states==6)
     {
-      Serial.println("Detected entry of exit");
       if(states[previous_index] == R)
       {
+        Serial.println("Detected entry ");
+        state_index=0;
+        states[0]=LR;
+        states[1]=0;
+        states[2]=0;
+        states[3]=0;
         return R;
       }
       else if(states[previous_index] == L)
       {
+        Serial.println("Detected exit ");
+        state_index=0;
+        states[0]=LR;
+        states[1]=0;
+        states[2]=0;
+        states[3]=0;
+
         return L;
       }
     }
+    state_index=0;
+    states[0]=LR;
+    states[1]=0;
+    states[2]=0;
+    states[3]=0;
   }
+  */
   return 0;
 }
 
