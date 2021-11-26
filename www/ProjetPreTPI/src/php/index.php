@@ -19,6 +19,9 @@
         <link rel="stylesheet" href="./src/css/library/Chart.min.css">
         <link rel="stylesheet" href="./src/css/library/bootstrap-toggle.min.css">
         <link rel="stylesheet" href="./src/css/custom.css">
+        
+        
+        
     </head>
     <body>
         <div class="modal fade" id="resumeModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
