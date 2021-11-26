@@ -32,6 +32,9 @@ CREATE TABLE `linkedto` (
   `ardMacAddress` varchar(17) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+INSERT INTO `linkedto` (`regId`, `ardMacAddress`) VALUES
+(2, '7017CFD108F0');
+
 
 --
 -- Structure de la table `t_arduino`
@@ -41,6 +44,8 @@ CREATE TABLE `t_arduino` (
   `ardMacAddress` varchar(17) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+INSERT INTO `t_arduino` (`ardMacAddress`) VALUES
+('7017CFD108F0');
 
 --
 -- Structure de la table `t_record`
