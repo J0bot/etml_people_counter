@@ -59,5 +59,16 @@ class DBHelper {
 
         $query->execute();
     }
+
+    /*
+    *Vide toutes les entrées de la db
+    */ 
+    public function deleteAllRecord() {
+        $instance = $this->getInstance();
+
+        $query = $instance->query("DELETE FROM t_record");
+
+        $query->execute();
+    }
 }
 ?>
