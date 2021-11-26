@@ -115,11 +115,6 @@ ALTER TABLE `linkedto`
   ADD PRIMARY KEY (`regId`,`ardMacAddress`),
   ADD KEY `linkedTo_t_arduino0_FK` (`ardMacAddress`);
 
---
--- Index pour la table `test`
---
-ALTER TABLE `test`
-  ADD PRIMARY KEY (`id`);
 
 --
 -- Index pour la table `t_arduino`
@@ -151,12 +146,6 @@ ALTER TABLE `t_region`
 --
 -- AUTO_INCREMENT pour les tables déchargées
 --
-
---
--- AUTO_INCREMENT pour la table `test`
---
-ALTER TABLE `test`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=92;
 
 --
 -- AUTO_INCREMENT pour la table `t_login`
