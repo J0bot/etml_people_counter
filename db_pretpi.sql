@@ -21,7 +21,7 @@ SET time_zone = "+00:00";
 -- Base de données : `db_pretpi`
 --
 
-USE db_pretpi
+USE db_pretpi;
 
 -- --------------------------------------------------------
 
