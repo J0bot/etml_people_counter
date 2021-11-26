@@ -35,6 +35,7 @@ MySQL_Connection conn((Client *)&client);
 #define R 1
 #define L 2
 #define LR 3
+int treshold = 70;
 static int state_index = 0;
 int states[4];
 
@@ -114,125 +115,106 @@ void insert_record(char* ardMacAddress, char* recType)
   free(request); //Ne pas oublier de libérer notre requete de la mémoire, sinon tout va être utilisé et ça ne marchera plus
 }
 
+int getState()
+{
+  int state;
+  //Si les deux lasers sont detectés
+  if(analogRead(A5)<treshold && analogRead(A6)<treshold )
+    state = LR;
+
+  //si on detecte que le laser de gauche
+  if(analogRead(A5)<treshold && analogRead(A6)>treshold )
+    state = L;
+    
+  //Si on detecte que le laser de droite
+  if(analogRead(A5)>treshold && analogRead(A6)<treshold )
+    state = R;
+
+  //Si on detecte aucun des deux lasers
+  if(analogRead(A5)>treshold && analogRead(A6)>treshold )
+    state = 0;
+
+  return state;
+}
 
 // Cette fonction va checker si des gens entrent ou sortent
 int checklasers()
 {
-  int previous_index = state_index;
   
-  //C'est l'état des deux capteurs
-  int state;
-  
-  //Si les deux lasers sont detectés
-  if(analogRead(A5)<70 && analogRead(A6)<70 )
-    state = LR;
-
-  //si on detecte que le laser de gauche
-  if(analogRead(A5)<70 && analogRead(A6)>70 )
-    state = L;
-    
-  //Si on detecte que le laser de droite
-  if(analogRead(A5)>70 && analogRead(A6)<70 )
-    state = R;
-
-  //Si on detecte aucun des deux lasers
-  if(analogRead(A5)>70 && analogRead(A6)>70 )
-    state = 0;
-
-  //Si on est dans le même etat que celui dans l'index actuel du tableau
-  if(states[state_index] == state)
-  {
+int state = getState();
+  int prev_state;
+  Serial.print("state = ");
+  Serial.println(state);
+  if (state >= 4) {
+    Serial.println("ERROR! index out of array! Giving up.");
+    state_index = 0;
     return 0;
   }
-  state_index++;
-  if (state_index >= 4) {
+  //if the index is 0, add the value to the index and return.
+  if (state_index == 0) {
+    //but not if it's an LR value (both lasers are not being intersected). index 0 should always be
+    //an L or an R.
+    if (state != LR) {
+      states[state_index] = state;
+      state_index++;
+    }
+    return 0;
+  }
+  //if the state is the same as the old one, return.
+  if (states[state_index - 1] == state) {
+    return 0;
+  }
+  //if were at the end of the array and the lasers are unblocked, someone entered/exited.
+  if (state == LR && state_index >= 3) {
+    Serial.println("ENTRANCE/EXIT");
+    //normally the index 1 should always be at 0 if someone crossed the lasers, but
+    //this is sometimes not the case. We still consider valid the entrance, but warn
+    //that it MAY be incorrect.
+    if (states[1] != 0)
+      Serial.println("BUG?");
     state_index = 0;
+    return 0;
+    //if only the lasers are unblocked, it's not valid. if an LR happens before index 3,
+    //it's not a valid entry (the person walked away?)
+  } else if (state == LR) {
+    Serial.println("GIVING UP");
+    //resetting the index
+    state_index = 0;
+    return 0;
   }
-  Serial.println(state_index);
+
+  //if the index is at least 2, we check if the value from two steps ago is the same as the
+  //current one (smth like L,0,L). It means the person is backing away, so it is not written in
+  //the index. (it will only be if it's a R in this example.)
+  if (state_index >= 2) {
+    prev_state = states[state_index - 2];
+    if (state == prev_state) {
+      Serial.println("UNDECIDED?");
+      return 0;
+    }
+    //if we're at the index 3 and the starting state is the same as the current one, we can just
+    //stop and start from the index 0 again, like nothing happened. (ex: L,0,R,L)
+    //note: in a dream world, this state should not happen, but if it does we will be out of
+    //the array and the program will crash. And we're not in a dream world.
+    if (state_index >= 3 && states[0] == state) {
+      state_index = 0;
+      states[state_index] = state;
+      state_index++; // could just put state_index = 1;, but for clarity's sake...
+      Serial.println("RESET");
+    }
+    //if the values are different, we can safely put the current state in the array.
+    states[state_index] = state;      
+    state_index++;
+    return 0;
+  }
+
+  //if nothing above applies to the current state, add it to the array and increment the
+  //index.
   states[state_index] = state;
-
-
-
-  return 0;
-
-
-
-/*
-  //On ajoute 1 à la variable index
   state_index++;
-
-  //Si notre index est à 4, on retourne à 0
-  if(state_index==4)
-  {
-    state_index = 0;  
-  }
-  
-  //On set notre tabeau stales à l'index state_index la valeur state.
-  states[state_index] = state;
-
-  //Tout ce code est purement du débug
-  
-    Serial.print("State : ");
-    Serial.println(state);
-
-
-  //Si on est dans l'état LR (deux lasers sont captés), on va lancer notre calcul
-  if (state == LR) 
-  {
-    //Si la somme des valeurs du tableau est de 6, ça veut dire qu'on a une entry ou exit
-    int sum_states = 0;
-    for(int i = 0 ; i < 4 ; i++)
-    {
-      sum_states+=states[i];
-    }
- 
-    Serial.print("State_index : ");
-    Serial.println(state_index);
-
-    Serial.print("states : ");
-    Serial.print(states[0]);
-    Serial.print(", ");
-    Serial.print(states[1]);
-    Serial.print(", ");
-    Serial.print(states[2]);
-    Serial.print(", ");
-    Serial.println(states[3]);
-    Serial.print("Somme des states : ");
-    Serial.println(sum_states);
-
-    //Si la somme est states est de 6, nous sommes dans un etat de entry ou exit, nous avons trouvé cette valeur grace à une table de vérités
-    if(sum_states==6)
-    {
-      if(states[previous_index] == R)
-      {
-        Serial.println("Detected entry ");
-        state_index=0;
-        states[0]=LR;
-        states[1]=0;
-        states[2]=0;
-        states[3]=0;
-        return R;
-      }
-      else if(states[previous_index] == L)
-      {
-        Serial.println("Detected exit ");
-        state_index=0;
-        states[0]=LR;
-        states[1]=0;
-        states[2]=0;
-        states[3]=0;
-
-        return L;
-      }
-    }
-    state_index=0;
-    states[0]=LR;
-    states[1]=0;
-    states[2]=0;
-    states[3]=0;
-  }
-  */
   return 0;
+
+
 }
 
 
