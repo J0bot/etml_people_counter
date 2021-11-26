@@ -20,7 +20,8 @@ char pass[] = SECRET_PASS;    // your network password (use for WPA, or use as k
 int status = WL_IDLE_STATUS;     // le status du wifi
 
 //Tout ce qui concerne le mysql
-IPAddress server_addr(192,168,1,36);  // IP of the MySQL *server* here
+//IPAddress server_addr(192,168,1,36);  // IP of the MySQL *server* here
+IPAddress server_addr(172,20,110,96);  // IP of the MySQL *server* here
 char user[] = USER_MYSQL;              // MySQL user login username
 char password[] = PASS_MYSQL;        // MySQL user login password
 
@@ -167,6 +168,20 @@ int state = getState();
   //if were at the end of the array and the lasers are unblocked, someone entered/exited.
   if (state == LR && state_index >= 3) {
     Serial.println("ENTRANCE/EXIT");
+    if (states[2] == L) {
+      Serial.println("ENTRANCE");
+      state_index = 0;
+      return L;
+      } else if (states[2] == R) {
+      Serial.println("EXIT");
+      state_index = 0;
+      return R;
+    } else {
+      Serial.println("What? it's not an entrance nor an exit!");
+      state_index = 0;
+      return 0;
+    }
+
     //normally the index 1 should always be at 0 if someone crossed the lasers, but
     //this is sometimes not the case. We still consider valid the entrance, but warn
     //that it MAY be incorrect.
@@ -221,15 +236,22 @@ int state = getState();
 //Cette fonction va allumer ou eteindre selon la valeur du capteur
 void blink_leds()
 {
-  if(analogRead(A5)<70)
+  Serial.print("Pin A5 : ");
+  Serial.println(analogRead(A5));
+  Serial.print("Pin A6 : ");
+  Serial.println(analogRead(A6));
+
+  if(analogRead(A5)<treshold)
     digitalWrite(0, HIGH);  
   else
     digitalWrite(0, LOW);
 
-  if(analogRead(A6)<70)
+  if(analogRead(A6)<treshold)
     digitalWrite(1, HIGH);  
   else
     digitalWrite(1, LOW);
+
+  return;
 }
 
 
@@ -246,7 +268,7 @@ void setup() {
   pinMode(1, OUTPUT);
   pinMode(0, OUTPUT);
 
-  memset(states, 0, 4);
+  memset(states, 0, sizeof(int) * 4); //////////////////////////
 
   // Ici on va essayer de se connecter au wifi
   while ( status != WL_CONNECTED) {
@@ -261,7 +283,7 @@ void setup() {
   if (conn.connect(server_addr, 3306, user, password)) {
 
     //Petit delay de 1 secondes pour laisser le temps de se connecter
-    delay(1000);
+    delay(2000);
     Serial.println("Connection successful !");
     
     
@@ -273,7 +295,7 @@ void setup() {
 
     //On va afficher l'addresse mac pour du debug
     Serial.println(ardMacAddress);
-
+    delay(1000);
     // Formater toute la query
     char* mysql_query = "INSERT IGNORE INTO db_pretpi.t_arduino SET ardMacAddress=\'"; //On va ecrire la query dans les values
     int string_length = sizeof(char)*1024; //on set la longeur du string à 1024 bytes
@@ -291,7 +313,7 @@ void setup() {
 
     //on va print la requete mysql sur la console série pour le debug
     Serial.println(request);
-
+    delay(1000);
     //On execute la query
     executeQuery(request);
     free(request);
@@ -300,38 +322,31 @@ void setup() {
   {
     // Si la connection a vraiment fail on va afficher qu'elle a fail
     Serial.println("Connection failed.");
+    delay(5000);
   }
 }
 
 // Cette fonction va tourner tout le temps
 void loop() {
-  
-  while (true)
+ 
+  blink_leds();
+  int result = checklasers();
+
+  //Si le resultat de nos tests est de L, nous allons envoyer une entry
+  if(result == L)
   {
-
-    /////
-    // AJOURD'HUI FAUT FINALISER CE ZBEUL
-    /////
-
-    blink_leds();
-    int result = checklasers();
-
-    //Si le resultat de nos tests est de L, nous allons envoyer une entry
-    if(result == L)
-    {
-      char* recType = "entry"; //c'est le type d'info qu'on envoie, entry ou exit
-      Serial.println("entry");
-      insert_record(ardMacAddress, recType);
-    }
-
-    //Si le resultat de nos tests est de R, nous allons envoyer une exit
-    if(result == R)
-    {
-      char* recType = "exit"; //c'est le type d'info qu'on envoie, entry ou exit
-      Serial.println("exit");
-      insert_record(ardMacAddress, recType);
-    }    
+    char* recType = "entry"; //c'est le type d'info qu'on envoie, entry ou exit
+    Serial.println("entry");
+    insert_record(ardMacAddress, recType);
   }
-  conn.close(); //Si on a tout finit, on ferme la connection
-  Serial.println("finished my job");
+
+  //Si le resultat de nos tests est de R, nous allons envoyer une exit
+  if(result == R)
+  {
+    char* recType = "exit"; //c'est le type d'info qu'on envoie, entry ou exit
+    Serial.println("exit");
+    insert_record(ardMacAddress, recType);
+  }    
+  delay(500);
+
 }
