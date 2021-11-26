@@ -32,123 +32,9 @@ CREATE TABLE `linkedto` (
   `ardMacAddress` varchar(17) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- Déchargement des données de la table `linkedto`
---
-
 INSERT INTO `linkedto` (`regId`, `ardMacAddress`) VALUES
-(2, '123456'),
-(1, 'f0:08:d1:cf:17:70');
+(2, '7017CFD108F0');
 
--- --------------------------------------------------------
-
---
--- Structure de la table `test`
---
-
-CREATE TABLE `test` (
-  `id` int(11) NOT NULL,
-  `abc` varchar(10) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Déchargement des données de la table `test`
---
-
-INSERT INTO `test` (`id`, `abc`) VALUES
-(1, 'Salut'),
-(2, 'Salut'),
-(3, 'Salut'),
-(4, 'Salut'),
-(5, 'Salut'),
-(6, 'Salut'),
-(7, 'Salut'),
-(8, 'Salut'),
-(9, 'Salut'),
-(10, 'Salut'),
-(11, 'Salut'),
-(12, 'Salut'),
-(13, 'Salut'),
-(14, 'Salut'),
-(15, 'Salut'),
-(16, 'Salut'),
-(17, 'Salut'),
-(18, 'Salut'),
-(19, 'Salut'),
-(20, 'Salut'),
-(21, 'Salut'),
-(22, 'Salut'),
-(23, 'Salut'),
-(24, 'Salut'),
-(25, 'Salut'),
-(26, 'Salut'),
-(27, 'Salut'),
-(28, 'Salut'),
-(29, 'Salut'),
-(30, 'Salut'),
-(31, 'Salut'),
-(32, 'Salut'),
-(33, 'Salut'),
-(34, 'Salut'),
-(35, 'Salut'),
-(36, 'Salut'),
-(37, 'Salut'),
-(38, 'Salut'),
-(39, 'Salut'),
-(40, 'Salut'),
-(41, 'Salut'),
-(42, 'Salut'),
-(43, 'Salut'),
-(44, 'Salut'),
-(45, 'Salut'),
-(46, 'Salut'),
-(47, 'Salut'),
-(48, 'Salut'),
-(49, 'Salut'),
-(50, 'Salut'),
-(51, 'Salut'),
-(52, 'Salut'),
-(53, 'Salut'),
-(54, 'Salut'),
-(55, 'Salut'),
-(56, 'Salut'),
-(57, 'Salut'),
-(58, 'Salut'),
-(59, 'Salut'),
-(60, 'Salut'),
-(61, 'Salut'),
-(62, 'Salut'),
-(63, 'Salut'),
-(64, 'Salut'),
-(65, 'Salut'),
-(66, 'Salut'),
-(67, 'Salut'),
-(68, 'Salut'),
-(69, 'Salut'),
-(70, 'Salut'),
-(71, 'Salut'),
-(72, 'Salut'),
-(73, 'Salut'),
-(74, 'Salut'),
-(75, 'Salut'),
-(76, 'Salut'),
-(77, 'Salut'),
-(78, 'Salut'),
-(79, 'Salut'),
-(80, 'Salut'),
-(81, 'Salut'),
-(82, 'Salut'),
-(83, 'Salut'),
-(84, 'Salut'),
-(85, 'Salut'),
-(86, 'Salut'),
-(87, 'Salut'),
-(88, 'Salut'),
-(89, 'Salut'),
-(90, 'Salut'),
-(91, 'Salut');
-
--- --------------------------------------------------------
 
 --
 -- Structure de la table `t_arduino`
@@ -158,15 +44,8 @@ CREATE TABLE `t_arduino` (
   `ardMacAddress` varchar(17) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- Déchargement des données de la table `t_arduino`
---
-
 INSERT INTO `t_arduino` (`ardMacAddress`) VALUES
-('123456'),
-('f0:08:d1:cf:17:70');
-
--- --------------------------------------------------------
+('7017CFD108F0');
 
 --
 -- Structure de la table `t_record`
@@ -179,17 +58,6 @@ CREATE TABLE `t_record` (
   `ardMacAddress` varchar(17) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- Déchargement des données de la table `t_record`
---
-
-INSERT INTO `t_record` (`recId`, `recDate`, `recType`, `ardMacAddress`) VALUES
-(10, '2021-10-07 16:15:46', 'entry', 'f0:08:d1:cf:17:70'),
-(11, '2021-10-07 16:25:14', 'exit', 'f0:08:d1:cf:17:70'),
-(12, '2021-11-12 09:17:17', 'entry', 'f0:08:d1:cf:17:70'),
-(13, '2021-11-12 09:18:23', 'exit', 'f0:08:d1:cf:17:70');
-
--- --------------------------------------------------------
 
 --
 -- Structure de la table `t_region`

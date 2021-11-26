@@ -48,16 +48,5 @@ class DBHelper {
 
         return $query->fetchAll();
     }
-
-    public function addRecord($recDate, $recType, $ardMacAddress) {
-        $instance = $this->getInstance();
-
-        $query = $instance->prepare("INSERT INTO t_record (recDate, recType, ardMacAddress) VALUES (:recDate, :recType, :ardMacAddress); ");
-        $query->bindParam('recDate', $recDate);
-        $query->bindParam('recType', $recType);
-        $query->bindParam('ardMacAddress', $ardMacAddress);
-
-        $query->execute();
-    }
 }
 ?>

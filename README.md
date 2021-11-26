@@ -5,11 +5,10 @@ this is the projet of the group 4, [José](https://github.com/J0bot), [Elisa](ht
 
 > ### Material used : 
 >
-> - [Ultrasonic sensor HC-SR04](https://cdn.sparkfun.com/datasheets/Sensors/Proximity/HCSR04.pdf)
+> - [Photoresistor](https://arduinomodules.info/ky-018-photoresistor-module)
 
 > ### Sources :
 >
-> - [Arduino tutorial for the HC-SR05 sensor by Arbi Abdul Jabbaar](https://create.arduino.cc/projecthub/abdularbi17/ultrasonic-sensor-hc-sr04-with-arduino-tutorial-327ff6?ref=user&ref_id=1134675&offset=0)
 > - [Arduino tutorial for wifi](https://docs.arduino.cc/tutorials/nano-33-iot/WiFi_connection)
 
 > ### Libraries Used :
@@ -29,7 +28,7 @@ Temporelement définit
 
 * Nous prévoyons d'avoir un compteur de personnes fonctionnel: est capavle de compter les entrées et sorties de personnes dans une salle, celui-ci doit être capable de pouvoir faire ce calcul en temps réel. et qu'il envoie les données des calculs à une base de données MySQL dans un serveur web en réseau local. 
 
-L'arduino se programme en C++ sur Visual Studio Code et Arduino IDE.
+L'arduino se programme en C++ sur Visual Studio Code, Arduino IDE, mais surtout avec PlatformIO sur Visual Studio Code.
 
 on cherchera uniquement à en programmer une fonctionnelle 
 
