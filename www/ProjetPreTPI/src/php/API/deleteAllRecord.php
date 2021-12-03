@@ -2,15 +2,11 @@
     require('./src/php/Application/DBHelper.php');
 
     $database = new DBHelper;
-    
-    //Password authentification
-    
-    
+    //echo(password_hash(1234, PASSWORD_BCRYPT));
 
-    if ($userPass == $password) {
-        $database->deleteAllRecord();
-    }
-
+    $database->deleteAllRecord();
+   
+    
 
     header("Location: /");
 ?>

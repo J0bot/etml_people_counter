@@ -68,5 +68,24 @@ class DBHelper {
         $query = $instance->query("DELETE FROM t_record");
         $query->execute();
     }
+    
+    public function check($password)
+    {
+        if($password == "1234"){
+            deleteAllRecord();
+        }
+    }
+
+
+    public function checkPassword($password){
+        $instance = $this->getInstance();
+        if($password == 1234){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+   
 }
 ?>

@@ -25,6 +25,9 @@ Route::add('/api/deleteall', function() {
     include('./src/php/API/deleteAllRecord.php');
 });
 
+Route::add('/api/checkPassword', function() {
+    include('./src/php/API/checkPassword.php');
+});
 
 Route::add('/api/addrecord', function() {
     include('./src/php/API/addRecord.php');

@@ -49,9 +49,7 @@
             <div><input id="toggleCharts" type="checkbox" checked data-toggle="toggle" data-on="Temps réel" data-off="Graphiques" data-onstyle="info" data-offstyle="primary" onclick="toggleCharts()"></div>
             <div class="col"></div>
             <!--implementation bouton vider entrées fasdfadfasd-->
-            <form action="/api/deleteall">
-               <button onclick="enterPassword()" type="submit" value="Vider toutes les entrées." class="btn btn-danger">
-            </form>
+            <button onclick="enterPassword()" type="submit" value="" class="btn btn-danger">Vider toutes les entrées.</button>
         </div>
         <div class="row row-cols-xl-3 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1">
             <?php
@@ -92,11 +90,16 @@
         <script src="./src/js/modalHandler.js"></script>
         <script>
             function enterPassword() {
-                var userPassword = prompt("Entrez le mot de passe");
-                if (userPassword == 1234 )
-                {
+                var userPassword = prompt("Entrez le mot de passe")
+                
+                if (userPassword == "1234") {
+
                     window.document.location.href = "/api/deleteall";
                 }
+                else if (userPassword){
+                    alert ("Mot de passe eronné");
+                }
+                
             }
             
         </script>
