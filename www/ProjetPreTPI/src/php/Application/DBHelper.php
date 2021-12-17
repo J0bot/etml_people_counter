@@ -48,5 +48,45 @@ class DBHelper {
 
         return $query->fetchAll();
     }
+
+    public function addRecord($recDate, $recType, $ardMacAddress) {
+        $instance = $this->getInstance();
+
+        $query = $instance->prepare("INSERT INTO t_record (recDate, recType, ardMacAddress) VALUES (:recDate, :recType, :ardMacAddress); ");
+        $query->bindParam('recDate', $recDate);
+        $query->bindParam('recType', $recType);
+        $query->bindParam('ardMacAddress', $ardMacAddress);
+
+        $query->execute();
+    }
+
+    /*
+    *Vide toutes les entrées de la table t_record
+    */ 
+    public function deleteAllRecord() {
+        $instance = $this->getInstance();
+        $query = $instance->query("DELETE FROM t_record");
+        $query->execute();
+    }
+    
+    public function check($password)
+    {
+        if($password == "1234"){
+            deleteAllRecord();
+        }
+    }
+
+
+    public function checkPassword($password){
+        $instance = $this->getInstance();
+        if($password == 1234){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+   
+
 }
 ?>

@@ -48,10 +48,8 @@
         <div class="row ml-1 mt-3">
             <div><input id="toggleCharts" type="checkbox" checked data-toggle="toggle" data-on="Temps réel" data-off="Graphiques" data-onstyle="info" data-offstyle="primary" onclick="toggleCharts()"></div>
             <div class="col"></div>
-            <!--implementation bouton vider entrées-->
-            <div>
-                <input type="button" value="Vider toutes les entrées." class="btn btn-danger"> 
-            </div>
+            <!--implementation bouton vider entrées fasdfadfasd-->
+            <button onclick="enterPassword()" type="submit" value="" class="btn btn-danger">Vider toutes les entrées.</button>
         </div>
         <div class="row row-cols-xl-3 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1">
             <?php
@@ -79,17 +77,31 @@
                 }
             ?>
         </div>
-    </body>
+        <script src="./src/js/library/jquery.min.js"></script>
+        <script src="./src/js/library/bootstrap.bundle.min.js"></script>
+        <script src="./src/js/library/bootstrap-toggle.min.js"></script>
+        <script src="./src/js/library/Chart.bundle.min.js"></script>
+        <script src="./src/js/library/hammer.min.js"></script>
+        <script src="./src/js/library/chartjs-plugin-zoom.min.js"></script>
+        <script src="./src/js/Application/graphicChart.js"></script>
+        <script src="./src/js/counterHandler.js"></script>
+        <script src="./src/js/graphicHandler.js"></script>
+        <script src="./src/js/toggleHandler.js"></script>
+        <script src="./src/js/modalHandler.js"></script>
+        <script>
+            function enterPassword() {
+                var userPassword = prompt("Entrez le mot de passe")
+                
+                if (userPassword == "1234") {
 
-    <script src="./src/js/library/jquery.min.js"></script>
-    <script src="./src/js/library/bootstrap.bundle.min.js"></script>
-    <script src="./src/js/library/bootstrap-toggle.min.js"></script>
-    <script src="./src/js/library/Chart.bundle.min.js"></script>
-    <script src="./src/js/library/hammer.min.js"></script>
-    <script src="./src/js/library/chartjs-plugin-zoom.min.js"></script>
-    <script src="./src/js/Application/graphicChart.js"></script>
-    <script src="./src/js/counterHandler.js"></script>
-    <script src="./src/js/graphicHandler.js"></script>
-    <script src="./src/js/toggleHandler.js"></script>
-    <script src="./src/js/modalHandler.js"></script>
+                    window.document.location.href = "/api/deleteall";
+                }
+                else if (userPassword){
+                    alert ("Mot de passe eronné");
+                }
+                
+            }
+            
+        </script>
+    </body>
 </html>
