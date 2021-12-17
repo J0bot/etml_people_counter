@@ -1,8 +1,0 @@
-2 lasers côte à côte
-
-laser 1, laser 2
-
------------
-quand laser 1 est activé, le 2 attend d'être activé à son tour
-si le 1 est désactivé et le 2 n'est pas activé, personne n'est passé
-si le 2 est activé à son tour, et les deux désactivés, une personne est passée
